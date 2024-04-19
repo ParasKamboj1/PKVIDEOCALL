@@ -21,7 +21,7 @@ import java.net.URL;
 
 public class dashboardActivity extends AppCompatActivity {
     EditText secretcode;
-    Button join,share;
+    Button join;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +36,7 @@ public class dashboardActivity extends AppCompatActivity {
 
         secretcode = findViewById(R.id.secretcode);
         join = findViewById(R.id.join);
-        share = findViewById(R.id.share);
+
 
         URL serverURL;
 

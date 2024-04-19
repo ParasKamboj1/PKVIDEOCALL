@@ -38,8 +38,7 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        dialog = new ProgressDialog(this);
-        dialog.setMessage("Please Wait...");
+
 
         email = findViewById(R.id.emailid);
         password = findViewById(R.id.passwordid);
@@ -56,26 +55,44 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dialog.show();
+
                 String em = email.getText().toString();
                 String pass = password.getText().toString();
-                auth.signInWithEmailAndPassword(em,pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        dialog.dismiss();
-                        if(task.isSuccessful()){
-                            Intent intent = new Intent(MainActivity.this, dashboardActivity.class);
-                            startActivity(intent);
-                            Toast.makeText(MainActivity.this, "Logged in", Toast.LENGTH_SHORT).show();
+
+                if(em.isEmpty()){
+                    email.setError("Fill your email!");
+                    Toast.makeText(MainActivity.this, "Fill your email!", Toast.LENGTH_SHORT).show();
+                }
+                else if(pass.isEmpty()){
+                    password.setError("Fill your password!");
+                    Toast.makeText(MainActivity.this, "Fill your password!", Toast.LENGTH_SHORT).show();
+                }
+                else{
+
+                    dialog = new ProgressDialog(MainActivity.this);
+                    dialog.setMessage("Please Wait...");
+                    dialog.show();
+                    auth.signInWithEmailAndPassword(em,pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            dialog.dismiss();
+                            if(task.isSuccessful()){
+                                Intent intent = new Intent(MainActivity.this, dashboardActivity.class);
+                                startActivity(intent);
+                                Toast.makeText(MainActivity.this, "Logged in", Toast.LENGTH_SHORT).show();
+                            }
+                            else{
+                                Toast.makeText(MainActivity.this, task.getException().getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                            }
                         }
-                        else{
-                            Toast.makeText(MainActivity.this, task.getException().getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+                    });
+                }
+
             }
         });
     }

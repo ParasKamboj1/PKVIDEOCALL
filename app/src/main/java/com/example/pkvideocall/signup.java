@@ -26,6 +26,7 @@ public class signup extends AppCompatActivity {
     EditText email,password,username;
     Button signup,alreadyaccount;
     FirebaseDatabase database;
+
     DatabaseReference reference;
     FirebaseAuth auth;
     @SuppressLint("MissingInflatedId")
@@ -62,25 +63,44 @@ public class signup extends AppCompatActivity {
                 String em = email.getText().toString();
                 String pass = password.getText().toString();
                 String use = username.getText().toString();
-                
-                auth.createUserWithEmailAndPassword(em,pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()){
 
-                            User user = new User(use,em,pass);
-                            String userId = auth.getCurrentUser().getUid();
-                            reference = database.getReference("users");
-                            reference.child(userId).setValue(user);
+                if(em.isEmpty()){
+                    email.setError("Fill the Email!");
+                    Toast.makeText(signup.this, "Fill the Email!", Toast.LENGTH_SHORT).show();
+                }
+                else if(pass.isEmpty()){
+                    password.setError("Fill the password!");
+                    Toast.makeText(signup.this, "Fill the password!", Toast.LENGTH_SHORT).show();
+                }
+                else if(use.isEmpty()){
+                    username.setError("Fill the username!");
+                    Toast.makeText(signup.this, "Fill the username!", Toast.LENGTH_SHORT).show();
+                }
+                else if(pass.length()<6){
+                    password.setError("Password must be contain atleast 6 characters!");
+                    Toast.makeText(signup.this, "Password must be contain atleast 6 characters!", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    auth.createUserWithEmailAndPassword(em,pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if(task.isSuccessful()){
 
-                            Toast.makeText(signup.this, "Account is created", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(signup.this, MainActivity.class);
-                            startActivity(intent);
-                        }else{
-                            Toast.makeText(signup.this, task.getException().getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                                User user = new User(use,em,pass);
+                                String userId = auth.getCurrentUser().getUid();
+                                reference = database.getReference("users");
+                                reference.child(userId).setValue(user);
+
+                                Toast.makeText(signup.this, "Account is created", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(signup.this, MainActivity.class);
+                                startActivity(intent);
+                            }else{
+                                Toast.makeText(signup.this, task.getException().getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }
-                });
+                    });
+                }
+
             }
         });
     }
